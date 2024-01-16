@@ -1,0 +1,12 @@
+.main {
+  display: flex;
+  flex-direction: row;
+}
+
+.codemirror {
+  padding-right: 10px;
+}
+
+body {
+  background-color: #e0e0d0;
+}
