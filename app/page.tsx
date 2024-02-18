@@ -1,7 +1,7 @@
 'use client'
 import CodeMirror, { BasicSetupOptions, Statistics, ViewUpdate } from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
-import { useCallback, useState } from 'react';
+import { MouseEvent, useCallback, useState } from 'react';
 
 const codemirrorSetup: BasicSetupOptions = {
   lineNumbers: true,
@@ -17,17 +17,35 @@ const codemirrorSetup: BasicSetupOptions = {
   highlightActiveLine: true,
 }
 
-type LogEvent = {
-  content: string,
+type BaseEvent = {
   timestamp: Date,
 }
 
-const getStatistics = (logs: LogEvent[]): string => {
-  if (logs.length > 0) {
-    const start = logs[0].timestamp.getTime()
-    const end = logs[logs.length - 1].timestamp.getTime()
-    const delta = end - start
-    return new Intl.RelativeTimeFormat().format(delta / 1000, "second")
+type ContentEvent = BaseEvent & {
+  kind: "content"
+  content: string,
+}
+
+
+type MouseMoveEvent = BaseEvent & {
+  kind: "movement"
+  dxs: number[]
+  dys: number[]
+}
+
+const isContent = (event: LogEvent): event is ContentEvent => event.kind === "content"
+const isMovement = (event: LogEvent): event is MouseMoveEvent => event.kind === "movement"
+
+type LogEvent = ContentEvent | MouseMoveEvent
+
+const secondsBetween = (start: Date, end: Date): number =>
+  (end.getTime() - start.getTime()) / 1000
+
+const getDuration = (logs: LogEvent[]): string => {
+  const start = logs.find(isContent)?.timestamp
+  const end = logs.findLast(isContent)?.timestamp
+  if (start && end) {
+    return new Intl.RelativeTimeFormat().format(secondsBetween(start, end), "second")
   }
   else {
     return "n/a"
@@ -42,17 +60,38 @@ export default function Home() {
   const onChange = useCallback((val: string, _viewUpdate: ViewUpdate) => {
     console.log('content change', val);
     setValue(val)
-    console.log(getStatistics(events));
-    setEvents([...events, { content: val, timestamp: new Date() }])
+    console.log(getDuration(events));
+    setEvents([...events, { timestamp: new Date(), kind: "content", content: val }])
   }, [events]);
 
   const onStatistics = useCallback((data: Statistics) => {
     // console.log("statistics", data);
   }, [])
 
+  const onMouseMove = useCallback((event: MouseEvent<HTMLElement>) => {
+    const debounceSeconds = 1
+    const last = events.findLast(isMovement)
+    const lasti = events.findLastIndex(isMovement)
+    const isDebounced = last !== undefined && secondsBetween(last.timestamp, new Date()) < debounceSeconds
+
+    if (isDebounced) {
+      const newEvents = [...events]
+      last.dxs.push(event.movementX)
+      last.dys.push(event.movementY)
+      newEvents[lasti] = last
+      setEvents([...newEvents])
+      console.log("debounced movement")
+    }
+    else {
+      setEvents([...events, { timestamp: new Date(), kind: "movement", dxs: [event.movementX], dys: [event.movementY] }])
+      console.log("new movement")
+    }
+
+  }, [events])
+
   return (
     <>
-      <main className='main'>
+      <main className='main' onMouseMove={onMouseMove}>
         <CodeMirror
           className='codemirror'
           value={value}
