@@ -52,15 +52,17 @@ const getDuration = (logs: LogEvent[]): string => {
   }
 }
 
+const getMouseMovements = (logs: LogEvent[]): number => logs.filter(isMovement).length
+
 export default function Home() {
   const [value, setValue] = useState("")
 
   const [events, setEvents] = useState<LogEvent[]>([])
 
   const onChange = useCallback((val: string, _viewUpdate: ViewUpdate) => {
-    console.log('content change', val);
     setValue(val)
     console.log(getDuration(events));
+    console.log(getMouseMovements(events));
     setEvents([...events, { timestamp: new Date(), kind: "content", content: val }])
   }, [events]);
 
@@ -80,11 +82,9 @@ export default function Home() {
       last.dys.push(event.movementY)
       newEvents[lasti] = last
       setEvents([...newEvents])
-      console.log("debounced movement")
     }
     else {
       setEvents([...events, { timestamp: new Date(), kind: "movement", dxs: [event.movementX], dys: [event.movementY] }])
-      console.log("new movement")
     }
 
   }, [events])
