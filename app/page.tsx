@@ -45,7 +45,7 @@ const getDuration = (logs: LogEvent[]): string => {
   const start = logs.find(isContent)?.timestamp
   const end = logs.findLast(isContent)?.timestamp
   if (start && end) {
-    return new Intl.RelativeTimeFormat().format(secondsBetween(start, end), "second")
+    return new Intl.RelativeTimeFormat("en-US", { style: "long" }).format(secondsBetween(start, end), "second")
   }
   else {
     return "n/a"
@@ -54,6 +54,10 @@ const getDuration = (logs: LogEvent[]): string => {
 
 const getMouseMovements = (logs: LogEvent[]): number => logs.filter(isMovement).length
 
+const report = (logs: LogEvent[]): void => {
+  console.log("completed", getDuration(logs), "with", getMouseMovements(logs), "mouse movements")
+}
+
 export default function Home() {
   const [value, setValue] = useState("")
 
@@ -61,9 +65,9 @@ export default function Home() {
 
   const onChange = useCallback((val: string, _viewUpdate: ViewUpdate) => {
     setValue(val)
-    console.log(getDuration(events));
-    console.log(getMouseMovements(events));
-    setEvents([...events, { timestamp: new Date(), kind: "content", content: val }])
+    const newEvents: LogEvent[] = [...events, { timestamp: new Date(), kind: "content", content: val }]
+    setEvents(newEvents)
+    report(newEvents)
   }, [events]);
 
   const onStatistics = useCallback((data: Statistics) => {
@@ -71,13 +75,14 @@ export default function Home() {
   }, [])
 
   const onMouseMove = useCallback((event: MouseEvent<HTMLElement>) => {
-    const debounceSeconds = 1
+    const debounceSeconds = 0.5
     const last = events.findLast(isMovement)
     const lasti = events.findLastIndex(isMovement)
     const isDebounced = last !== undefined && secondsBetween(last.timestamp, new Date()) < debounceSeconds
 
     if (isDebounced) {
       const newEvents = [...events]
+      last.timestamp = new Date()
       last.dxs.push(event.movementX)
       last.dys.push(event.movementY)
       newEvents[lasti] = last
@@ -103,8 +108,6 @@ export default function Home() {
           basicSetup={codemirrorSetup}
           onChange={onChange}
           onStatistics={onStatistics}
-        // onCreateEditor={onCreateEditor}
-        // onUpdate={onUpdate}
         />
         <p>
           Commmand list and instructions here
