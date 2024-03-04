@@ -1,5 +1,6 @@
 'use client'
 import { javascript } from '@codemirror/lang-javascript';
+import { python } from '@codemirror/lang-python';
 import CodeMirror, { BasicSetupOptions } from '@uiw/react-codemirror';
 
 const codemirrorSetup: BasicSetupOptions = {
@@ -18,7 +19,12 @@ const codemirrorSetup: BasicSetupOptions = {
 
 export type EditorProps = {
     code: string,
-    language: "javascript"
+    language: keyof typeof languages
+}
+
+const languages = {
+    "javascript": javascript(),
+    "python": python()
 }
 
 export const Editor = ({ code, language }: EditorProps) => {
@@ -26,7 +32,7 @@ export const Editor = ({ code, language }: EditorProps) => {
         className='codemirror'
         value={code}
         readOnly
-        extensions={[javascript()]}
+        extensions={[languages[language]]}
         basicSetup={codemirrorSetup}
     />
 }

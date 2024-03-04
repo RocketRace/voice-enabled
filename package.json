@@ -9,12 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@codemirror/lang-cpp": "^6.0.2",
+    "@codemirror/lang-java": "^6.0.1",
+    "@codemirror/lang-javascript": "6.2.1",
+    "@codemirror/lang-python": "^6.1.4",
+    "@codemirror/lang-rust": "^6.0.1",
+    "@nextjournal/lang-clojure": "^1.0.0",
+    "@uiw/react-codemirror": "^4.21.21",
     "codemirror": "6.0.1",
     "next": "14.0.4",
     "react": "^18",
-    "react-dom": "^18",
-    "@uiw/react-codemirror": "^4.21.21",
-    "@codemirror/lang-javascript": "6.2.1"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "@types/node": "^20",
