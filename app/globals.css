@@ -4,8 +4,14 @@
   gap: 10px;
 }
 
-.codemirror {
-  padding-right: 10px;
+.left-pane {
+  display: flex;
+  flex-direction: column;
+}
+
+.right-pane {
+  display: flex;
+  flex-direction: column;
 }
 
 body {

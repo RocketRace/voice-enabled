@@ -5,9 +5,13 @@ import { Recorder } from "./Recorder";
 
 export default function Main() {
   return <main className='main'>
-    <Editor code="console.log('hello, world!')" language="javascript" />
-    <Executor type="text" />
-    <Instructions />
-    <Recorder />
+    <div className="left-pane">
+      <Editor code="console.log('hello, world!')" language="javascript" />
+      <Executor type="text" />
+    </div>
+    <div className="right-pane">
+      <Instructions />
+      <Recorder />
+    </div>
   </main>
 }

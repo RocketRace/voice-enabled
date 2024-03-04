@@ -25,8 +25,6 @@ export const Editor = ({ code, language }: EditorProps) => {
     return <CodeMirror
         className='codemirror'
         value={code}
-        height='500px'
-        width='700px'
         readOnly
         extensions={[javascript()]}
         basicSetup={codemirrorSetup}
