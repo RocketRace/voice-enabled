@@ -1,6 +1,10 @@
 'use client'
+import { cpp } from '@codemirror/lang-cpp';
+import { java } from '@codemirror/lang-java';
 import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
+import { rust } from '@codemirror/lang-rust';
+import { clojure } from '@nextjournal/lang-clojure';
 import CodeMirror, { BasicSetupOptions } from '@uiw/react-codemirror';
 
 const codemirrorSetup: BasicSetupOptions = {
@@ -24,7 +28,11 @@ export type EditorProps = {
 
 const languages = {
     "javascript": javascript(),
-    "python": python()
+    "python": python(),
+    "rust": rust(),
+    "cpp": cpp(),
+    "java": java(),
+    "clojure": clojure(),
 }
 
 export const Editor = ({ code, language }: EditorProps) => {
