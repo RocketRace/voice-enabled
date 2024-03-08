@@ -2,7 +2,7 @@
 import { Editor, EditorProps } from "./Editor";
 import { Executor } from "./Executor";
 import { Instructions } from "./Instructions";
-import { Recorder } from "./Recorder";
+import { AudioRecorder } from "./Recorder";
 import { useEffect, useState } from "react";
 
 const snippets: readonly EditorProps[] = [
@@ -32,7 +32,7 @@ export default function Main() {
     </div>
     <div className="right-pane">
       <Instructions />
-      <Recorder />
+      <AudioRecorder />
     </div>
   </main>
 }
