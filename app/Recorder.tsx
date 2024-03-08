@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Uploader } from './Uploader';
 
 export const AudioRecorder = () => {
     const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
@@ -17,6 +18,7 @@ export const AudioRecorder = () => {
         return () => clearInterval(id);
     }, []);
 
+    const blob = new Blob(audioChunks, { type: "audio/wav" })
     const getUrl = () => URL.createObjectURL(new Blob(audioChunks, { type: 'audio/wav' }))
 
     const startRecording = async () => {
@@ -67,6 +69,7 @@ export const AudioRecorder = () => {
     const uploadRecording = async () => {
         const url = getUrl();
         console.log(url)
+
     }
 
     const computeDuration = (start: Date, end: Date) => {
@@ -97,9 +100,7 @@ export const AudioRecorder = () => {
                     Stop Recording
                 </button>
                 {!isRecording && audioChunks.length > 0 && (
-                    <button onClick={uploadRecording}>
-                        Upload recording to server
-                    </button>
+                    <Uploader blob={blob} />
                 )}
             </div>
         </div>
