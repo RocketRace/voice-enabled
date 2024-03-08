@@ -5,21 +5,30 @@ import { Instructions } from "./Instructions";
 import { AudioRecorder } from "./Recorder";
 import { useEffect, useState } from "react";
 
-const snippets: readonly EditorProps[] = [
+export type LanguageSpec = EditorProps & {
+  call: string,
+  languageId: string,
+}
+
+const snippets: readonly LanguageSpec[] = [
   {
-    code: "console.log('hello, world!')\n",
-    language: "javascript"
+    code: "function main(arg) {\n\treturn `Hello, ${arg}!`\n}",
+    call: "console.log(main(process.argv[2]))",
+    language: "javascript",
+    languageId: "node"
   },
   {
-    code: "print('hello, world!')\n",
-    language: "python"
+    code: "def main(arg):\n\treturn f'Hello, {arg}!'",
+    call: "import sys\nprint(main(*sys.argv[1:]))",
+    language: "python",
+    languageId: "python"
   }
 ]
 
 const fakeRandom = (max: number) => Math.floor((new Date().getUTCMilliseconds()) % max)
 
 export default function Main() {
-  const [snippet, setSnippet] = useState<EditorProps | null>(null);
+  const [snippet, setSnippet] = useState<LanguageSpec | null>(null);
 
   useEffect(() => {
     setSnippet(snippets[fakeRandom(2)]);
@@ -28,7 +37,7 @@ export default function Main() {
   return <main className='main'>
     <div className="left-pane">
       {snippet && <Editor {...snippet} />}
-      <Executor type="text" />
+      {snippet && <Executor type="text" spec={snippet} />}
     </div>
     <div className="right-pane">
       <Instructions />
