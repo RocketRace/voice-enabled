@@ -1,3 +1,9 @@
+## The voice-enabled programming experiment
+
+See this project on https://voice-enabled.vercel.app
+
+(it's *that* easy to deploy on vercel??)
+
 ## Running
 
 ```bash
