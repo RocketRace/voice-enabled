@@ -6,6 +6,8 @@ export const Uploader = ({ blob }: { blob: Blob }) => {
     const [uploading, setUploading] = useState(false)
     const [uploaded, setUploaded] = useState(false)
 
+    const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? ''
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
@@ -19,7 +21,7 @@ export const Uploader = ({ blob }: { blob: Blob }) => {
         const file = files[0]
 
         const response = await fetch(
-            process.env.NEXT_PUBLIC_BASE_URL + '/api/upload',
+            NEXT_PUBLIC_BASE_URL + '/api/upload',
             {
                 method: 'POST',
                 headers: {
