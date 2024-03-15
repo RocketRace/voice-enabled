@@ -5,13 +5,19 @@ import { v4 as uuidv4 } from 'uuid'
 export async function POST(request: Request) {
     const payload = await request.json()
     const filename: string = payload.filename;
+    const projectPhase: string = payload.projectPhase;
     const contentType: string = payload.contentType;
 
     const AWS_REGION = process.env.AWS_REGION;
     const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
+    const VERIFICATION_KEY = process.env.VERIFICATION_KEY;
 
-    if (!AWS_REGION || !AWS_BUCKET_NAME) {
+    if (!AWS_REGION || !AWS_BUCKET_NAME || !VERIFICATION_KEY) {
         return Response.json({ error: "Misconfigured environment variables" })
+    }
+
+    if (VERIFICATION_KEY != projectPhase) {
+        return Response.json({ error: "Wrong phase" })
     }
 
     try {
@@ -24,7 +30,7 @@ export async function POST(request: Request) {
                 ['starts-with', '$Content-Type', contentType],
             ],
             Fields: {
-                acl: 'public-read',
+                acl: 'private',
                 'Content-Type': contentType,
             },
             Expires: 600, // Seconds before the presigned post expires. 3600 by default.

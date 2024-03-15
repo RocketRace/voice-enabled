@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 
 export const Uploader = ({ blob }: { blob: Blob }) => {
     const inputRef = useRef<HTMLInputElement>(null)
+    const verificationRef = useRef<HTMLInputElement>(null)
     const [uploading, setUploading] = useState(false)
     const [uploaded, setUploaded] = useState(false)
 
@@ -24,7 +25,11 @@ export const Uploader = ({ blob }: { blob: Blob }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ filename: file.name, contentType: file.type }),
+                body: JSON.stringify({
+                    filename: file.name,
+                    contentType: file.type,
+                    projectPhase: verificationRef.current?.value ?? ""
+                }),
             }
         )
 
@@ -77,6 +82,8 @@ export const Uploader = ({ blob }: { blob: Blob }) => {
         <form onSubmit={handleSubmit}>
             <input hidden type="file" name="file" id="file" accept=".wav" ref={inputRef} />
             <p>{label}</p>
+            <p>Enter the password to continue:</p>
+            <input name="verification" ref={verificationRef} />
             <button type="submit" disabled={uploaded}>{buttonText}</button>
         </form>
     )
