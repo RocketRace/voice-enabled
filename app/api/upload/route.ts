@@ -35,7 +35,7 @@ export async function POST(request: Request) {
         const client = new S3Client({ region: AWS_REGION })
         const { url, fields } = await createPresignedPost(client, {
             Bucket: AWS_BUCKET_NAME,
-            Key: `${uuidv4()}-audio`,
+            Key: `${uuidv4()}.wav`,
             Conditions: [
                 ['content-length-range', 0, 10485760], // up to 10 MB
                 ['starts-with', '$Content-Type', contentType],
