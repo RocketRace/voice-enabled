@@ -90,7 +90,7 @@ export const AudioRecorder = ({ language }: { language: string }) => {
     const duration = computeDuration(startedAt, currentTime)
 
     return (
-        <div className='recording-div'>
+        <div className='recorder'>
             {isRecording && duration}
             <div className='recording-buttons'>
                 <button onClick={startRecording} disabled={isRecording}>

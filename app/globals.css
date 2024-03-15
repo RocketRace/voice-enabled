@@ -1,19 +1,57 @@
+:root {
+  --background: #f0f0e0;
+  --block: #e0e0c0;
+}
+
 .main {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 20px;
+  min-height: 50vh;
+  margin: 5%;
+}
+
+.divider {
+  width: 100%;
+  border-style: none;
 }
 
 .left-pane {
   display: flex;
+  width: 50%;
+  min-height: 100%;
   flex-direction: column;
+}
+
+.codemirror {
+  padding: 20px;
+  background-color: var(--block);
+  margin-bottom: 20px;
+}
+
+.executor {
+  background-color: var(--block);
+  padding: 20px;
 }
 
 .right-pane {
   display: flex;
+  width: 50%;
   flex-direction: column;
 }
 
+.instructions {
+  min-height: 50%;
+  background-color: var(--block);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.recorder {
+  background-color: var(--block);
+  padding: 20px;
+}
+
 body {
-  background-color: #e0e0d0;
+  background-color: var(--background);
 }

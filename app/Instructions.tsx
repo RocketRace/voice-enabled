@@ -1,5 +1,5 @@
 export const Instructions = () => {
-    return <div>
+    return <div className="instructions">
         <p>instructions here</p>
         <ul>
             <li>japa japa</li>

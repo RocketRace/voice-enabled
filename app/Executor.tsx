@@ -67,7 +67,7 @@ export const Executor = ({ type, spec }: { type: InputType, spec: LanguageSpec }
         connect()
     }
 
-    return <div>
+    return <div className="executor">
         <p>Input here:</p>
         <input
             type={type}
