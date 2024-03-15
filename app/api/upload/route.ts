@@ -12,6 +12,9 @@ export async function POST(request: Request) {
 
     const timestamp = new Date().toISOString()
 
+    const objectKey = `${timestamp}-${language}-${uuidv4()}-${safeEmail}.wav`
+    console.log("created key", objectKey)
+
     const AWS_REGION = process.env.AWS_REGION;
     const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
     const VERIFICATION_KEY = process.env.VERIFICATION_KEY;
@@ -27,19 +30,19 @@ export async function POST(request: Request) {
         if (!VERIFICATION_KEY) {
             console.log("VERIFICATION_KEY")
         }
-        return Response.json({ error: "Misconfigured environment variables" })
+        return Response.error()
     }
 
     if (VERIFICATION_KEY != projectPhase) {
         console.log("Bad verification key")
-        return Response.json({ error: "Wrong phase" })
+        return Response.error()
     }
 
     try {
         const client = new S3Client({ region: AWS_REGION })
         const { url, fields } = await createPresignedPost(client, {
             Bucket: AWS_BUCKET_NAME,
-            Key: `${timestamp}-${language}-${uuidv4()}-${safeEmail}.wav`,
+            Key: objectKey,
             Conditions: [
                 ['content-length-range', 0, 10485760], // up to 10 MB
                 ['starts-with', '$Content-Type', contentType],
@@ -54,6 +57,6 @@ export async function POST(request: Request) {
         return Response.json({ url, fields })
     } catch (error: any) {
         console.log("Presigned post error", error)
-        return Response.json({ error: error.message })
+        return Response.error()
     }
 }
