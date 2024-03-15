@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Uploader } from './Uploader';
 
-export const AudioRecorder = () => {
+export const AudioRecorder = ({ language }: { language: string }) => {
     const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
     const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
     const [isRecording, setIsRecording] = useState(false);
@@ -100,7 +100,7 @@ export const AudioRecorder = () => {
                     Stop Recording
                 </button>
                 {!isRecording && audioChunks.length > 0 && (
-                    <Uploader blob={blob} />
+                    <Uploader blob={blob} language={language} />
                 )}
             </div>
         </div>

@@ -4,9 +4,13 @@ import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(request: Request) {
     const payload = await request.json()
-    const filename: string = payload.filename;
     const projectPhase: string = payload.projectPhase;
     const contentType: string = payload.contentType;
+    const email: string = payload.email;
+    const safeEmail = encodeURI(email);
+    const language: string = payload.language
+
+    const timestamp = new Date().toISOString()
 
     const AWS_REGION = process.env.AWS_REGION;
     const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
@@ -35,7 +39,7 @@ export async function POST(request: Request) {
         const client = new S3Client({ region: AWS_REGION })
         const { url, fields } = await createPresignedPost(client, {
             Bucket: AWS_BUCKET_NAME,
-            Key: `${uuidv4()}.wav`,
+            Key: `${timestamp}-${language}-${uuidv4()}-${safeEmail}.wav`,
             Conditions: [
                 ['content-length-range', 0, 10485760], // up to 10 MB
                 ['starts-with', '$Content-Type', contentType],

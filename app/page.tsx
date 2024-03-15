@@ -41,7 +41,7 @@ export default function Main() {
     </div>
     <div className="right-pane">
       <Instructions />
-      <AudioRecorder />
+      {snippet && <AudioRecorder language={snippet?.language} />}
     </div>
   </main>
 }

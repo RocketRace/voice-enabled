@@ -1,8 +1,14 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 
-export const Uploader = ({ blob }: { blob: Blob }) => {
+export type UploaderProps = {
+    blob: Blob;
+    language: string;
+};
+
+export const Uploader = ({ blob, language }: UploaderProps) => {
     const inputRef = useRef<HTMLInputElement>(null)
     const verificationRef = useRef<HTMLInputElement>(null)
+    const emailRef = useRef<HTMLInputElement>(null)
     const [uploading, setUploading] = useState(false)
     const [uploaded, setUploaded] = useState(false)
 
@@ -10,6 +16,13 @@ export const Uploader = ({ blob }: { blob: Blob }) => {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+
+        const email = emailRef.current?.value
+
+        if (!email) {
+            alert("Please include your email address.")
+            return
+        }
 
         const files = inputRef.current?.files;
 
@@ -28,9 +41,10 @@ export const Uploader = ({ blob }: { blob: Blob }) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    filename: file.name,
                     contentType: file.type,
-                    projectPhase: verificationRef.current?.value ?? ""
+                    projectPhase: verificationRef.current?.value ?? "",
+                    email: email,
+                    language: language
                 }),
             }
         )
@@ -77,15 +91,15 @@ export const Uploader = ({ blob }: { blob: Blob }) => {
         }
     }, [inputRef])
 
-    const label = !uploading ? "Upload the audio recording to the server" : "Uploading..."
+    const label = !uploading ? "Enter your email address and the shared password to upload your audio recording to the server:" : "Uploading..."
     const buttonText = uploaded ? "Already uploaded" : "Upload"
 
     return (
         <form onSubmit={handleSubmit}>
             <input hidden type="file" name="file" id="file" accept=".wav" ref={inputRef} />
             <p>{label}</p>
-            <p>Enter the password to continue:</p>
-            <input name="verification" ref={verificationRef} />
+            <span>Email:</span><input required type="email" id="email" ref={emailRef} />
+            <span>Shared password:</span><input required name="verification" id="verification" ref={verificationRef} />
             <button type="submit" disabled={uploaded}>{buttonText}</button>
         </form>
     )
