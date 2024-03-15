@@ -13,10 +13,21 @@ export async function POST(request: Request) {
     const VERIFICATION_KEY = process.env.VERIFICATION_KEY;
 
     if (!AWS_REGION || !AWS_BUCKET_NAME || !VERIFICATION_KEY) {
+        console.log("Bad configuration:")
+        if (!AWS_REGION) {
+            console.log("AWS_REGION")
+        }
+        if (!AWS_BUCKET_NAME) {
+            console.log("AWS_BUCKET_NAME")
+        }
+        if (!VERIFICATION_KEY) {
+            console.log("VERIFICATION_KEY")
+        }
         return Response.json({ error: "Misconfigured environment variables" })
     }
 
     if (VERIFICATION_KEY != projectPhase) {
+        console.log("Bad verification key")
         return Response.json({ error: "Wrong phase" })
     }
 
@@ -35,9 +46,10 @@ export async function POST(request: Request) {
             },
             Expires: 600, // Seconds before the presigned post expires. 3600 by default.
         })
-
+        console.log("Sucessful upload")
         return Response.json({ url, fields })
     } catch (error: any) {
+        console.log("Presigned post error", error)
         return Response.json({ error: error.message })
     }
 }
