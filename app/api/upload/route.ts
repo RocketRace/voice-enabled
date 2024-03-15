@@ -30,12 +30,12 @@ export async function POST(request: Request) {
         if (!VERIFICATION_KEY) {
             console.log("VERIFICATION_KEY")
         }
-        return Response.error()
+        return Response.json({ error: "Server error" })
     }
 
     if (VERIFICATION_KEY != projectPhase) {
         console.log("Bad verification key")
-        return Response.error()
+        return Response.json({ error: "Shared password" })
     }
 
     try {
@@ -57,6 +57,6 @@ export async function POST(request: Request) {
         return Response.json({ url, fields })
     } catch (error: any) {
         console.log("Presigned post error", error)
-        return Response.error()
+        return Response.json({ error: "Server error" })
     }
 }
