@@ -32,6 +32,13 @@
 .executor {
   background-color: var(--block);
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.with-gap {
+  margin-right: 10px;
 }
 
 .right-pane {

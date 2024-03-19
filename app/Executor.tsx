@@ -13,7 +13,7 @@ export const Executor = ({ type, spec }: { type: InputType, spec: LanguageSpec }
     const [input, setInput] = useState("")
     const [result, setResult] = useState("")
 
-    const connect = useCallback(() => {
+    const connectAndRun = useCallback(() => {
         // Establish WebSocket connection
         const ws = new WebSocket('wss://ato.pxeger.com/api/v1/ws/execute');
 
@@ -64,18 +64,24 @@ export const Executor = ({ type, spec }: { type: InputType, spec: LanguageSpec }
 
     const downloadVirus = async () => {
         setResult("")
-        connect()
+        connectAndRun()
     }
 
     return <div className="executor">
-        <p>Input here:</p>
-        <input
-            type={type}
-            value={input}
-            onChange={e => setInput(e.target.value)}
-        />
-        <p>and execute it!</p>
-        <button type="button" onClick={downloadVirus}>download virus</button>
-        <input readOnly type="text" value={result} />
+        <span>Try the code with the following input:</span>
+        <div>
+            <input
+                type={type}
+                value={input}
+                className="with-gap"
+                placeholder="Enter input"
+                onChange={e => setInput(e.target.value)}
+            />
+            <button type="button" onClick={downloadVirus}>Run code</button>
+        </div>
+        <div>
+            <span className="with-gap">Result:</span>
+            <input readOnly type="text" value={result} />
+        </div>
     </div>
 }
