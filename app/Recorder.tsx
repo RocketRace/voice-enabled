@@ -91,6 +91,7 @@ export const AudioRecorder = ({ language }: { language: string }) => {
 
     return (
         <div className='recorder'>
+            {!isRecording && <p>Record your voice once you're done. You will be asked to upload your recording later.</p>}
             {isRecording && duration}
             <div className='recording-buttons'>
                 <button onClick={startRecording} disabled={isRecording}>
