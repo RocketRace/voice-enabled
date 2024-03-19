@@ -34,14 +34,19 @@ export default function Main() {
     setSnippet(snippets[fakeRandom(2)]);
   })
 
-  return <main className='main'>
-    <div className="left-pane">
-      {snippet && <Editor {...snippet} />}
-      {snippet && <Executor type="text" spec={snippet} />}
-    </div>
-    <div className="right-pane">
-      <Instructions />
-      {snippet && <AudioRecorder language={snippet?.language} />}
-    </div>
-  </main>
+  return <div className='page'>
+    <header className="header">
+      <h1 className="big-text">Voice-enabled coding</h1>
+    </header>
+    <main className="main">
+      <div className="right-pane">
+        <Instructions />
+        {snippet && <AudioRecorder language={snippet?.language} />}
+      </div>
+      <div className="left-pane">
+        {snippet && <Editor {...snippet} />}
+        {snippet && <Executor type="text" spec={snippet} />}
+      </div>
+    </main>
+  </div>
 }

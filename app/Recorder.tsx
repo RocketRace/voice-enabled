@@ -94,7 +94,7 @@ export const AudioRecorder = ({ language }: { language: string }) => {
         ? <p>Recording: {duration}</p>
         : isRecorded
             ? <p>Recorded: {stoppedDuration}</p>
-            : <p>Record your voice once you're done. You will be asked to upload your recording later.</p>
+            : <p>Record your voice here. You will be asked to share your recording later.</p>
 
     return (
         <div className='recorder'>

@@ -80,7 +80,7 @@ export const Executor = ({ type, spec }: { type: InputType, spec: LanguageSpec }
             <button type="button" onClick={downloadVirus}>Run code</button>
         </div>
         <div>
-            <span className="with-gap">Result:</span>
+            <span className="with-gap">Output:</span>
             <input readOnly type="text" value={result} />
         </div>
     </div>

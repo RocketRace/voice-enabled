@@ -1,6 +1,26 @@
 :root {
   --background: #e0f4d6;
   --block: #c7dcb4;
+  --dark: #122109;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5%;
+}
+
+.header {
+  padding: 20px;
+  background-color: var(--block);
+  margin-bottom: 20px;
+  flex-grow: 0;
+}
+
+.big-text {
+  margin: 0px;
+  color: var(--dark);
 }
 
 .main {
@@ -8,7 +28,6 @@
   flex-direction: row;
   gap: 20px;
   min-height: 50vh;
-  margin: 5%;
 }
 
 .divider {
