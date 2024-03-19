@@ -4,6 +4,9 @@ export const FormAlert = ({ visible }: { visible: boolean }) => {
     return visible && <div className="cover">
         <div className="after-upload">
             <p>
+                Uploaded successfully!
+            </p>
+            <p>
                 Thank you for participating in this experiment!
             </p>
             <p>

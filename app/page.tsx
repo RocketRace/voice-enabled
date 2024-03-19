@@ -36,7 +36,7 @@ export default function Main() {
 
   return <div className='page'>
     <header className="header">
-      <h1 className="big-text">Voice-enabled coding</h1>
+      <h1 className="big-text">Voice Programming Experiment</h1>
     </header>
     <main className="main">
       <div className="right-pane">

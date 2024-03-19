@@ -2,8 +2,8 @@ export const Instructions = () => {
     return <div className="instructions">
         <h2 className="big-text">Instructions</h2>
         <p>
-            To begin, make sure you're in a relatively quiet environment without any speaking.
-            This will only take about 15 minutes.
+            To begin, make sure you're on a computer in a relatively quiet environment without any speaking.
+            This experiment will only take about 15 minutes.
         </p>
         <p>
             On the right, you will see a program in a programming language.
