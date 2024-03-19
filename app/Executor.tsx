@@ -68,7 +68,7 @@ export const Executor = ({ type, spec }: { type: InputType, spec: LanguageSpec }
     }
 
     return <div className="executor">
-        <span>Try the code with the following input:</span>
+        <span>Try running the code to see how it behaves.</span>
         <div>
             <input
                 type={type}

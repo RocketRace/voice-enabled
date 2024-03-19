@@ -35,12 +35,23 @@ const languages = {
     "clojure": clojure(),
 }
 
+const languageNames = {
+    "javascript": "JavaScript",
+    "python": "Python",
+    "rust": "Rust",
+    "cpp": "C++",
+    "java": "Java",
+    "clojure": "Clojure",
+}
+
 export const Editor = ({ code, language }: EditorProps) => {
-    return <CodeMirror
-        className='codemirror'
-        value={code}
-        readOnly
-        extensions={[languages[language]]}
-        basicSetup={codemirrorSetup}
-    />
+    return <div className='codemirror'>
+        <p>Read and understand the following {languageNames[language]} code:</p>
+        <CodeMirror
+            value={code}
+            readOnly
+            extensions={[languages[language]]}
+            basicSetup={codemirrorSetup}
+        />
+    </div>
 }
