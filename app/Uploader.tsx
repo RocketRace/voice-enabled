@@ -95,12 +95,20 @@ export const Uploader = ({ blob, language }: UploaderProps) => {
     const buttonText = uploaded ? "Already uploaded" : "Upload"
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input hidden type="file" name="file" id="file" accept=".wav" ref={inputRef} />
+        <form className="uploader" onSubmit={handleSubmit}>
             <p>{label}</p>
-            <span>Email:</span><input required type="email" id="email" ref={emailRef} />
-            <span>Shared password:</span><input required name="verification" id="verification" ref={verificationRef} />
-            <button type="submit" disabled={uploaded}>{buttonText}</button>
+            <input hidden type="file" name="file" id="file" accept=".wav" ref={inputRef} />
+            <div>
+                <span className="with-gap">Email:</span>
+                <input className="with-gap" required type="email" id="email" ref={emailRef} />
+            </div>
+            <div>
+                <span className="with-gap">Shared password:</span>
+                <input required name="verification" id="verification" ref={verificationRef} />
+            </div>
+            <div>
+                <button type="submit" disabled={uploaded}>{buttonText}</button>
+            </div>
         </form>
     )
 }

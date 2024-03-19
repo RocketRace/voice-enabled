@@ -9,8 +9,12 @@ export const AudioRecorder = ({ language }: { language: string }) => {
     const [isRecording, setIsRecording] = useState(false);
     const [startedAt, setStartedAt] = useState(new Date());
     const [currentTime, setCurrentTime] = useState(new Date());
+    const [stoppedAt, setStoppedAt] = useState<Date | null>(null);
+
+    const isRecorded = !isRecording && audioChunks.length > 0
 
     useEffect(() => {
+        setCurrentTime(new Date());
         const id = setInterval(() => {
             setCurrentTime(new Date());
         }, 1000);
@@ -19,7 +23,7 @@ export const AudioRecorder = ({ language }: { language: string }) => {
     }, []);
 
     const blob = new Blob(audioChunks, { type: "audio/wav" })
-    const getUrl = () => URL.createObjectURL(new Blob(audioChunks, { type: 'audio/wav' }))
+
 
     const startRecording = async () => {
         try {
@@ -54,6 +58,7 @@ export const AudioRecorder = ({ language }: { language: string }) => {
     const stopRecording = () => {
         if (recorder && recorder.state === 'recording') {
             recorder.stop();
+            setStoppedAt(new Date())
         }
     };
 
@@ -62,15 +67,10 @@ export const AudioRecorder = ({ language }: { language: string }) => {
             // Cleanup: Stop recording and release resources when the component unmounts
             if (recorder && recorder.state === 'recording') {
                 recorder.stop();
+                setRecorder(null)
             }
         };
     }, [recorder]);
-
-    const uploadRecording = async () => {
-        const url = getUrl();
-        console.log(url)
-
-    }
 
     const computeDuration = (start: Date, end: Date) => {
         const delta = end.valueOf() - start.valueOf()
@@ -88,19 +88,25 @@ export const AudioRecorder = ({ language }: { language: string }) => {
     }
 
     const duration = computeDuration(startedAt, currentTime)
+    const stoppedDuration = stoppedAt && computeDuration(startedAt, stoppedAt)
+
+    const label = isRecording
+        ? <p>Recording: {duration}</p>
+        : isRecorded
+            ? <p>Recorded: {stoppedDuration}</p>
+            : <p>Record your voice once you're done. You will be asked to upload your recording later.</p>
 
     return (
         <div className='recorder'>
-            {!isRecording && <p>Record your voice once you're done. You will be asked to upload your recording later.</p>}
-            {isRecording && duration}
+            {label}
             <div className='recording-buttons'>
-                <button onClick={startRecording} disabled={isRecording}>
+                <button className='with-gap' onClick={startRecording} disabled={isRecording}>
                     Start Recording
                 </button>
                 <button onClick={stopRecording} disabled={!isRecording}>
                     Stop Recording
                 </button>
-                {!isRecording && audioChunks.length > 0 && (
+                {isRecorded && (
                     <Uploader blob={blob} language={language} />
                 )}
             </div>

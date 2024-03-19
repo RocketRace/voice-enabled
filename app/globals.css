@@ -59,6 +59,12 @@
   padding: 20px;
 }
 
+.uploader {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 body {
   background-color: var(--background);
 }
