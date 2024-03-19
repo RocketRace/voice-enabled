@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormAlert } from "./FormAlert";
 
 export type UploaderProps = {
     blob: Blob;
@@ -12,10 +13,18 @@ export const Uploader = ({ blob, language }: UploaderProps) => {
     const [uploading, setUploading] = useState(false)
     const [uploaded, setUploaded] = useState(false)
 
+    const uploade_frontend_debug = process.env.NEXT_PUBLIC_DEBUG === "true"
+
     const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? ''
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+
+        if (uploade_frontend_debug) {
+            console.log("debug", uploade_frontend_debug)
+            setUploaded(true)
+            return
+        }
 
         const email = emailRef.current?.value
 
@@ -65,7 +74,6 @@ export const Uploader = ({ blob, language }: UploaderProps) => {
             })
 
             if (uploadResponse.ok) {
-                alert('Upload successful!')
                 setUploaded(true)
             } else {
                 console.error('S3 Upload Error:', uploadResponse)
@@ -94,21 +102,26 @@ export const Uploader = ({ blob, language }: UploaderProps) => {
     const label = !uploading ? "Enter your email address and the shared password to upload your audio recording to the server:" : "Uploading..."
     const buttonText = uploaded ? "Already uploaded" : "Upload"
 
-    return (
-        <form className="uploader" onSubmit={handleSubmit}>
-            <p>{label}</p>
-            <input hidden type="file" name="file" id="file" accept=".wav" ref={inputRef} />
-            <div>
-                <span className="with-gap">Email:</span>
-                <input className="with-gap" required type="email" id="email" ref={emailRef} />
-            </div>
-            <div>
-                <span className="with-gap">Shared password:</span>
-                <input required name="verification" id="verification" ref={verificationRef} />
-            </div>
-            <div>
-                <button type="submit" disabled={uploaded}>{buttonText}</button>
-            </div>
-        </form>
+    const notYetUploaded = (
+        <>
+            <form className="uploader" onSubmit={handleSubmit}>
+                <p>{label}</p>
+                <input hidden type="file" name="file" id="file" accept=".wav" ref={inputRef} />
+                <div>
+                    <span className="with-gap">Email:</span>
+                    <input className="with-gap" required type="email" id="email" ref={emailRef} />
+                </div>
+                <div>
+                    <span className="with-gap">Shared password:</span>
+                    <input required name="verification" id="verification" ref={verificationRef} />
+                </div>
+                <div>
+                    <button type="submit" disabled={uploaded}>{buttonText}</button>
+                </div>
+            </form>
+            <FormAlert visible={uploaded} />
+        </>
     )
+
+    return notYetUploaded
 }
