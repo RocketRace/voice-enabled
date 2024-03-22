@@ -5,6 +5,7 @@ const io = readline.createInterface({
     output: process.stdout,
 });
 
-io.on("line", number => {
+io.on("line", string => {
+    const number = parseInt(string);
     console.log(`${number} squared is ${number * number}`);
 })
