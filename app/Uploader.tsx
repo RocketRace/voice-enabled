@@ -61,6 +61,7 @@ export const Uploader = ({ results }: UploaderProps) => {
                 const j = await response.json()
                 if (j.error) {
                     alert('Incorrect shared password')
+                    break;
                 }
                 else {
                     // obtained the presigned url
