@@ -58,29 +58,35 @@ export const Uploader = ({ results }: UploaderProps) => {
             )
 
             if (response.ok) {
-                // obtained the presigned url
-                const { url, fields } = await response.json()
+                const j = await response.json()
+                if (j.error) {
+                    alert('Incorrect shared password')
+                }
+                else {
+                    // obtained the presigned url
+                    const { url, fields } = await response.json()
 
-                const formData = new FormData()
-                Object.entries(fields).forEach(([key, value]) => {
-                    formData.append(key, value as string)
-                })
-                const file = new File([result.recording], "audio.wav", { type: "audio/wav" })
-                formData.append('file', file)
+                    const formData = new FormData()
+                    Object.entries(fields).forEach(([key, value]) => {
+                        formData.append(key, value as string)
+                    })
+                    const file = new File([result.recording], "audio.wav", { type: "audio/wav" })
+                    formData.append('file', file)
 
-                const uploadResponse = await fetch(url, {
-                    method: 'POST',
-                    body: formData,
-                })
+                    const uploadResponse = await fetch(url, {
+                        method: 'POST',
+                        body: formData,
+                    })
 
-                if (uploadResponse.ok) {
-                    if (uploadCount === results.length - 1) {
-                        setUploaded(true)
+                    if (uploadResponse.ok) {
+                        if (uploadCount === results.length - 1) {
+                            setUploaded(true)
+                        }
+                        setUploadCount(uploadCount + 1)
+                    } else {
+                        console.error('S3 Upload Error:', uploadResponse)
+                        alert('Upload failed.')
                     }
-                    setUploadCount(uploadCount + 1)
-                } else {
-                    console.error('S3 Upload Error:', uploadResponse)
-                    alert('Upload failed.')
                 }
             } else {
                 alert('Failed to get pre-signed URL.')
