@@ -20,7 +20,7 @@ export const Instructions = () => {
             You are encouraged to speak to the computer with a natural speaking style.
         </p>
         <p>
-            After you upload your recording, we'll ask you to fill out a short form taking about 5 minutes.
+            After you upload your recordings, we'll ask you to fill out a short form taking about 5 minutes.
         </p>
     </div>
 }
