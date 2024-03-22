@@ -16,9 +16,9 @@ const LanguageChoice = ({ name, required }: PickedLanguage) => {
             input.checked = !input.checked
         }
     }
-    return <li className="language-choice-item" onClick={handleClick}>
+    return <li className="language-choice-item">
         <input type="checkbox" name={name} id={idSafeName} defaultChecked={required} disabled={required} />
-        <span className="picker-lang">{name}</span>
+        <span onClick={handleClick} className="picker-lang">{name}</span>
     </li>
 }
 
