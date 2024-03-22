@@ -1,115 +1,105 @@
+'use client'
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { FormAlert } from "./FormAlert";
+import { Result } from "./Interface";
 
 export type UploaderProps = {
-    blob: Blob;
-    language: string;
+    results: Result[]
 };
 
-export const Uploader = ({ blob, language }: UploaderProps) => {
-    const inputRef = useRef<HTMLInputElement>(null)
+export const Uploader = ({ results }: UploaderProps) => {
     const verificationRef = useRef<HTMLInputElement>(null)
-    const emailRef = useRef<HTMLInputElement>(null)
+    const participantRef = useRef<HTMLInputElement>(null)
     const [uploading, setUploading] = useState(false)
     const [uploaded, setUploaded] = useState(false)
 
-    const uploade_frontend_debug = process.env.NEXT_PUBLIC_DEBUG === "true"
+    const [uploadCount, setUploadCount] = useState(0)
+    console.log(results)
+
+    const uploader_frontend_debug = process.env.NEXT_PUBLIC_DEBUG === "true"
 
     const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? ''
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        if (uploade_frontend_debug) {
-            console.log("debug", uploade_frontend_debug)
+        if (uploader_frontend_debug) {
+            console.log("debug", uploader_frontend_debug)
             setUploaded(true)
             return
         }
 
-        const email = emailRef.current?.value
+        const participantNumber = participantRef.current?.value
 
-        if (!email) {
-            alert("Please include your email address.")
+        if (!participantNumber) {
+            alert("Please include your participant number.")
             return
         }
 
-        const files = inputRef.current?.files;
-
-        if (!files || files.length === 0) {
-            alert('Please select a file to upload.')
-            return
-        }
         setUploading(true)
-        const file = files[0]
+        for (let i = 0; i < results.length; i++) {
+            const result = results[i];
 
-        const response = await fetch(
-            NEXT_PUBLIC_BASE_URL + '/api/upload',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    contentType: file.type,
-                    projectPhase: verificationRef.current?.value ?? "",
-                    email: email,
-                    language: language
-                }),
-            }
-        )
+            const response = await fetch(
+                NEXT_PUBLIC_BASE_URL + '/api/upload',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contentType: 'audio/wav',
+                        projectPhase: verificationRef.current?.value ?? "",
+                        participantNumber: participantNumber,
+                        language: result.language,
+                        variant: result.variant
+                    }),
+                }
+            )
 
-        if (response.ok) {
-            // obtained the presigned url
-            const { url, fields } = await response.json()
+            if (response.ok) {
+                // obtained the presigned url
+                const { url, fields } = await response.json()
 
-            const formData = new FormData()
-            Object.entries(fields).forEach(([key, value]) => {
-                formData.append(key, value as string)
-            })
-            formData.append('file', file)
+                const formData = new FormData()
+                Object.entries(fields).forEach(([key, value]) => {
+                    formData.append(key, value as string)
+                })
+                const file = new File([result.recording], "audio.wav", { type: "audio/wav" })
+                formData.append('file', file)
 
-            const uploadResponse = await fetch(url, {
-                method: 'POST',
-                body: formData,
-            })
+                const uploadResponse = await fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                })
 
-            if (uploadResponse.ok) {
-                setUploaded(true)
+                if (uploadResponse.ok) {
+                    if (uploadCount === results.length - 1) {
+                        setUploaded(true)
+                    }
+                    setUploadCount(uploadCount + 1)
+                } else {
+                    console.error('S3 Upload Error:', uploadResponse)
+                    alert('Upload failed.')
+                }
             } else {
-                console.error('S3 Upload Error:', uploadResponse)
-                alert('Upload failed.')
+                alert('Failed to get pre-signed URL.')
             }
-        } else {
-            alert('Failed to get pre-signed URL.')
         }
 
         setUploading(false)
     }
 
-    useEffect(() => {
-        const fileInput = inputRef.current;
-        if (fileInput) {
-            // Create a File object from the Blob
-            const file = new File([blob], 'audio.wav', { type: 'audio/wav' });
-
-            // Set the File object as the value of the file input
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            fileInput.files = dataTransfer.files;
-        }
-    }, [inputRef])
-
-    const label = !uploading ? "Enter your email address and the shared password to upload your audio recording to the server:" : "Uploading..."
+    const label = !uploading ? "Enter your participant number and the shared password to upload your audio recordings to the server:" : "Uploading..."
     const buttonText = uploaded ? "Already uploaded" : "Upload"
 
     const notYetUploaded = (
         <>
             <form className="uploader" onSubmit={handleSubmit}>
                 <p>{label}</p>
-                <input hidden type="file" name="file" id="file" accept=".wav" ref={inputRef} />
                 <div>
-                    <span className="with-gap">Email:</span>
-                    <input className="with-gap" required type="email" id="email" ref={emailRef} />
+                    <span className="with-gap">Participant number:</span>
+                    <input className="with-gap" required type="text" id="participantNumber" ref={participantRef} />
                 </div>
                 <div>
                     <span className="with-gap">Shared password:</span>

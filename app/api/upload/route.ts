@@ -4,15 +4,16 @@ import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(request: Request) {
     const payload = await request.json()
-    const projectPhase: string = payload.projectPhase;
-    const contentType: string = payload.contentType;
-    const email: string = payload.email;
-    const safeEmail = encodeURI(email);
-    const language: string = payload.language
+    const projectPhase: string = payload.projectPhase.trim();
+    const contentType: string = payload.contentType.trim();
+    const participantNumber: string = payload.participantNumber.trim().slice(0, 128);
+    const safeParticipantNumber = encodeURI(participantNumber);
+    const language: string = payload.language.trim();
+    const variant: string = payload.variant.trim();
 
-    const timestamp = new Date().toISOString()
+    const timestamp = new Date().toISOString();
 
-    const objectKey = `${timestamp}-${language}-${uuidv4()}-${safeEmail}.wav`
+    const objectKey = `${timestamp}-${language}-${variant}-${uuidv4()}-${safeParticipantNumber}.wav`
     console.log("created key", objectKey)
 
     const AWS_REGION = process.env.AWS_REGION;

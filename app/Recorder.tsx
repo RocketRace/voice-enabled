@@ -1,14 +1,19 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
-import { Uploader } from './Uploader';
+import React, { useState, useEffect, useCallback } from 'react';
 
-export const AudioRecorder = ({ language }: { language: string }) => {
+export type AudioRecorderProps = {
+    confirmRecording: (blob: Blob) => void;
+    disabled: boolean;
+    isLastProgram: boolean;
+}
+
+export const AudioRecorder = ({ disabled, confirmRecording, isLastProgram }: AudioRecorderProps) => {
     const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
     const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
     const [isRecording, setIsRecording] = useState(false);
-    const [startedAt, setStartedAt] = useState(new Date());
     const [currentTime, setCurrentTime] = useState(new Date());
+    const [startedAt, setStartedAt] = useState<Date | null>(null);
     const [stoppedAt, setStoppedAt] = useState<Date | null>(null);
 
     const isRecorded = !isRecording && audioChunks.length > 0
@@ -21,9 +26,6 @@ export const AudioRecorder = ({ language }: { language: string }) => {
 
         return () => clearInterval(id);
     }, []);
-
-    const blob = new Blob(audioChunks, { type: "audio/wav" })
-
 
     const startRecording = async () => {
         try {
@@ -87,28 +89,42 @@ export const AudioRecorder = ({ language }: { language: string }) => {
         return durationString;
     }
 
-    const duration = computeDuration(startedAt, currentTime)
-    const stoppedDuration = stoppedAt && computeDuration(startedAt, stoppedAt)
+    const duration = startedAt && computeDuration(startedAt, currentTime)
+    const stoppedDuration = startedAt && stoppedAt && computeDuration(startedAt, stoppedAt)
 
-    const label = isRecording
-        ? <p>Recording: {duration}</p>
-        : isRecorded
-            ? <p>Recorded: {stoppedDuration}</p>
-            : <p>Record your voice here. You will be asked to share your recording later.</p>
+    const label = disabled
+        ? <p><em>Please select programming languages first</em></p>
+        : isRecording
+            ? <p>Recording: {duration}</p>
+            : isRecorded
+                ? <p>Recorded: {stoppedDuration}</p>
+                : <p>Record your voice here. You will be asked to share your recording later.</p>
+
+    const handleNextProgram = useCallback(() => {
+        // setAudioChunks([]) + if (isRecorded) ensures that the callback isn't evaluated recursively
+        if (isRecorded) {
+            const blob = new Blob(audioChunks, { type: "audio/wav" })
+            setAudioChunks([])
+            setRecorder(null)
+            setStartedAt(null);
+            setStoppedAt(null)
+            confirmRecording(blob)
+        }
+    }, [isRecorded, audioChunks, confirmRecording, setRecorder, setAudioChunks, setStartedAt, setStoppedAt])
 
     return (
         <div className='recorder'>
             {label}
             <div className='recording-buttons'>
-                <button className='with-gap' onClick={startRecording} disabled={isRecording}>
+                <button className='with-gap' onClick={startRecording} disabled={isRecording || disabled}>
                     Start Recording
                 </button>
-                <button onClick={stopRecording} disabled={!isRecording}>
+                <button className='with-gap' onClick={stopRecording} disabled={!isRecording || disabled}>
                     Stop Recording
                 </button>
-                {isRecorded && (
-                    <Uploader blob={blob} language={language} />
-                )}
+                <button onClick={handleNextProgram} disabled={!isRecorded || disabled}>
+                    {isLastProgram ? "Finish experiment" : "Next program"}
+                </button>
             </div>
         </div>
     );

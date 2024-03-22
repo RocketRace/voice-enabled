@@ -4,6 +4,7 @@ import { java } from '@codemirror/lang-java';
 import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
 import { rust } from '@codemirror/lang-rust';
+import { LanguageSupport } from '@codemirror/language';
 import { clojure } from '@nextjournal/lang-clojure';
 import CodeMirror, { BasicSetupOptions } from '@uiw/react-codemirror';
 
@@ -22,11 +23,12 @@ const codemirrorSetup: BasicSetupOptions = {
 }
 
 export type EditorProps = {
-    code: string,
-    language: keyof typeof languages
+    source: string,
+    editorId: string,
+    languageName: string
 }
 
-const languages = {
+const languages: { [name: string]: LanguageSupport } = {
     "javascript": javascript(),
     "python": python(),
     "rust": rust(),
@@ -35,22 +37,13 @@ const languages = {
     "clojure": clojure(),
 }
 
-const languageNames = {
-    "javascript": "JavaScript",
-    "python": "Python",
-    "rust": "Rust",
-    "cpp": "C++",
-    "java": "Java",
-    "clojure": "Clojure",
-}
-
-export const Editor = ({ code, language }: EditorProps) => {
+export const Editor = ({ source, editorId, languageName }: EditorProps) => {
     return <div className='codemirror'>
-        <p>Read and understand the following {languageNames[language]} code:</p>
+        <p className='editor-label'>Read and understand the following <b>{languageName}</b> code:</p>
         <CodeMirror
-            value={code}
+            value={source}
             readOnly
-            extensions={[languages[language]]}
+            extensions={[languages[editorId]]}
             basicSetup={codemirrorSetup}
         />
     </div>

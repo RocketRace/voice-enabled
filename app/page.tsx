@@ -1,52 +1,26 @@
-'use client'
-import { Editor, EditorProps } from "./Editor";
-import { Executor } from "./Executor";
-import { Instructions } from "./Instructions";
-import { AudioRecorder } from "./Recorder";
-import { useEffect, useState } from "react";
+import { Interface } from "./Interface";
+import { readFile } from "fs/promises"
+import { languages, variants } from "./programs"
 
-export type LanguageSpec = EditorProps & {
-  call: string,
-  languageId: string,
-}
-
-const snippets: readonly LanguageSpec[] = [
-  {
-    code: "function main(arg) {\n\treturn `Hello, ${arg}!`\n}",
-    call: "console.log(main(process.argv[2]))",
-    language: "javascript",
-    languageId: "node"
-  },
-  {
-    code: "def main(arg):\n\treturn f'Hello, {arg}!'",
-    call: "import sys\nprint(main(*sys.argv[1:]))",
-    language: "python",
-    languageId: "python"
+export default async function Main() {
+  let programs = []
+  for (const languageName in languages) {
+    if (Object.prototype.hasOwnProperty.call(languages, languageName)) {
+      const language = languages[languageName]
+      let programVariants = []
+      for (const variant in variants) {
+        if (Object.prototype.hasOwnProperty.call(variants, variant)) {
+          const program = await readFile(`./app/programs/${variant}.${language.extension}`, "utf-8")
+          programVariants.push({
+            variantName: variant,
+            source: program,
+            languageName: languageName
+          })
+        }
+      }
+      programs.push(programVariants)
+    }
   }
-]
 
-const fakeRandom = (max: number) => Math.floor((new Date().getUTCMilliseconds()) % max)
-
-export default function Main() {
-  const [snippet, setSnippet] = useState<LanguageSpec | null>(null);
-
-  useEffect(() => {
-    setSnippet(snippets[fakeRandom(2)]);
-  })
-
-  return <div className='page'>
-    <header className="header">
-      <h1 className="big-text">Voice Programming Experiment</h1>
-    </header>
-    <main className="main">
-      <div className="right-pane">
-        <Instructions />
-        {snippet && <AudioRecorder language={snippet?.language} />}
-      </div>
-      <div className="left-pane">
-        {snippet && <Editor {...snippet} />}
-        {snippet && <Executor type="text" spec={snippet} />}
-      </div>
-    </main>
-  </div>
+  return <Interface programs={programs} />
 }

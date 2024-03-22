@@ -1,15 +1,20 @@
 'use client'
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 
 import msgpack5 from 'msgpack5';
-import { LanguageSpec } from "./page";
+import { wp } from "./programs";
 
 // Initialize msgpack5
 const msgpack = msgpack5();
 
-export type InputType = "text"
+export type ExecutorProps = {
+    io: "value" | "terminal",
+    executorId: string,
+    code: string,
+    wrapper: string
+}
 
-export const Executor = ({ type, spec }: { type: InputType, spec: LanguageSpec }) => {
+export const Executor = ({ io, executorId, code, wrapper }: ExecutorProps) => {
     const [input, setInput] = useState("")
     const [result, setResult] = useState("")
 
@@ -21,11 +26,11 @@ export const Executor = ({ type, spec }: { type: InputType, spec: LanguageSpec }
         ws.addEventListener('open', async () => {
             console.log('WebSocket connection opened');
             ws.send(msgpack.encode({
-                language: spec.languageId,
-                code: `${spec.code}\n${spec.call}`,
-                input: "",
+                language: executorId,
+                code: wrapper.replace(wp, code),
+                input: io === "terminal" ? input : "",
                 options: [],
-                arguments: [input],
+                arguments: io === "value" ? [input] : [],
                 timeout: 5
             }).slice());
         });
@@ -66,6 +71,8 @@ export const Executor = ({ type, spec }: { type: InputType, spec: LanguageSpec }
         setResult("")
         connectAndRun()
     }
+
+    const type = io === "value" ? "number" : "text"
 
     return <div className="executor">
         <span>Try running the code to see how it behaves.</span>

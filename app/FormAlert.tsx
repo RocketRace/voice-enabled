@@ -6,16 +6,18 @@ export const FormAlert = ({ visible }: { visible: boolean }) => {
             <p>
                 Uploaded successfully!
             </p>
+            <div className="form-prompt">
+                <p>
+                    Please fill out the following form to finish the experiment:
+                </p>
+                <a href={form_url}>
+                    <button className="with-gap">Click here to go to the form</button>
+                </a>
+                <p>Or use this link: <a href={form_url}>{form_url}</a></p>
+            </div>
             <p>
-                Thank you for participating in this experiment!
+                <b>Thank you for participating!</b>
             </p>
-            <p>
-                Please fill out the following form to finish:
-            </p>
-            <a href={form_url}>
-                <button className="with-gap">Click here to go to the form</button>
-            </a>
-            <span>Or use this link: <a href={form_url}>{form_url}</a></span>
         </div>
-    </div>
+    </div >
 }

@@ -4,6 +4,13 @@
   --dark: #122109;
 }
 
+.selections {
+  background-color: var(--block);
+  padding: 20px;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
 .page {
   display: flex;
   flex-direction: column;
@@ -47,6 +54,24 @@
   padding: 20px;
   background-color: var(--block);
   margin-bottom: 20px;
+}
+
+.editor-label {
+  margin-top: 0;
+}
+
+.language-picker {
+  background-color: var(--block);
+  padding: 20px;
+}
+
+.picker-list {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.picker-lang {
+  margin-left: 10px;
 }
 
 .executor {
@@ -102,6 +127,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  background-color: var(--block);
+  padding: 20px;
 }
 
 body {
