@@ -6,7 +6,7 @@ import { Instructions } from "./Instructions"
 import { LanguagePicker, SelectedLanguages } from "./LanguagePicker"
 import { AudioRecorder } from "./Recorder"
 import { Uploader } from "./Uploader"
-import { languages, variants, wp } from "./programs"
+import { languages, variants, programHere } from "./programs"
 
 function shuffleInplace<T>(array: T[]) {
     let currentIndex = array.length
@@ -127,13 +127,16 @@ export const Interface = ({ programs }: InterfaceProps) => {
                     languageName={currentProgram.languageName}
                 />}
                 {isSelected && <Executor
-                    io={variants[currentProgram.variantName]}
+                    io={variants[currentProgram.variantName].io}
                     executorId={languages[currentProgram.languageName].executorId}
                     code={currentProgram.source}
                     wrapper={
-                        currentProgram.variantName === "value"
+                        variants[currentProgram.variantName].io === "value"
                             ? languages[currentProgram.languageName].wrapper
-                            : wp
+                            : programHere
+                    }
+                    funcName={
+                        variants[currentProgram.variantName].funcName   
                     }
                 />}
             </div>

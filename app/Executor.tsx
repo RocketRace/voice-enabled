@@ -2,7 +2,7 @@
 import { useCallback, useState } from "react"
 
 import msgpack5 from 'msgpack5';
-import { wp } from "./programs";
+import { funcNameHere, programHere } from "./programs";
 
 // Initialize msgpack5
 const msgpack = msgpack5();
@@ -11,26 +11,35 @@ export type ExecutorProps = {
     io: "value" | "terminal",
     executorId: string,
     code: string,
-    wrapper: string
+    wrapper: string,
+    funcName: string,
 }
 
-export const Executor = ({ io, executorId, code, wrapper }: ExecutorProps) => {
+export const Executor = ({ io, executorId, code, wrapper, funcName }: ExecutorProps) => {
     const [input, setInput] = useState("")
     const [result, setResult] = useState("")
+    const [isError, setIsError] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
+    
     const connectAndRun = useCallback(() => {
+        setIsError(false);
+        setIsLoading(true);
         // Establish WebSocket connection
         const ws = new WebSocket('wss://ato.pxeger.com/api/v1/ws/execute');
+
+        // big dirty hack
+        const shouldUseStdio = io === "terminal" || executorId == "cplusplus_gcc"
 
         // Set up event listeners
         ws.addEventListener('open', async () => {
             console.log('WebSocket connection opened');
             ws.send(msgpack.encode({
                 language: executorId,
-                code: wrapper.replace(wp, code),
-                input: io === "terminal" ? input : "",
+                code: wrapper.replace(programHere, code).replace(funcNameHere, funcName),
+                input: shouldUseStdio ? input : "",
                 options: [],
-                arguments: io === "value" ? [input] : [],
+                arguments: shouldUseStdio ? [] : [input],
                 timeout: 5
             }).slice());
         });
@@ -48,6 +57,12 @@ export const Executor = ({ io, executorId, code, wrapper }: ExecutorProps) => {
                 const s = new TextDecoder("utf-8").decode(arr)
                 setResult(prev => prev + s)
             }
+            if ("Stderr" in obj) {
+                const arr: Uint8Array = obj.Stderr;
+                const s = new TextDecoder("utf-8").decode(arr)
+                setResult(prev => prev + s)
+                setIsError(true)
+            }
 
             if ("Done" in obj) {
                 // aaand we're done
@@ -57,6 +72,7 @@ export const Executor = ({ io, executorId, code, wrapper }: ExecutorProps) => {
 
         ws.addEventListener('close', (event) => {
             console.log('WebSocket connection closed:', event);
+            setIsLoading(false);
         });
 
         // Cleanup: Close WebSocket connection when component unmounts
@@ -65,7 +81,7 @@ export const Executor = ({ io, executorId, code, wrapper }: ExecutorProps) => {
                 ws.close();
             }
         };
-    }, [input])
+    }, [input, code, executorId, wrapper, funcName, setResult, io])
 
     const downloadVirus = async () => {
         setResult("")
@@ -88,7 +104,9 @@ export const Executor = ({ io, executorId, code, wrapper }: ExecutorProps) => {
         </div>
         <div>
             <span className="with-gap">Output:</span>
-            <input readOnly type="text" value={result} />
+            <input readOnly type="text" value={
+                isError ? `<error> ${result}` : isLoading ? "Loading..." : result
+            } />
         </div>
     </div>
 }
