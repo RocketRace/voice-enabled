@@ -97,10 +97,10 @@ export const Executor = ({ io, executorId, code, wrapper, funcName }: ExecutorPr
                 type={type}
                 value={input}
                 className="with-gap"
-                placeholder="Enter input"
+                placeholder={io === "terminal" ? "Enter input to the program" : "Enter input to the function"}
                 onChange={e => setInput(e.target.value)}
             />
-            <button type="button" onClick={downloadVirus}>Run code</button>
+            <button type="button" onClick={downloadVirus}>Run</button>
         </div>
         <div>
             <span className="with-gap">Output:</span>
