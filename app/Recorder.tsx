@@ -6,9 +6,11 @@ export type AudioRecorderProps = {
     confirmRecording: (blob: Blob) => void;
     disabled: boolean;
     isLastProgram: boolean;
+    programsCompleted: number;
+    programsTotal: number;
 }
 
-export const AudioRecorder = ({ disabled, confirmRecording, isLastProgram }: AudioRecorderProps) => {
+export const AudioRecorder = ({ disabled, confirmRecording, isLastProgram, programsCompleted, programsTotal }: AudioRecorderProps) => {
     const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
     const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
     const [isRecording, setIsRecording] = useState(false);
@@ -123,7 +125,7 @@ export const AudioRecorder = ({ disabled, confirmRecording, isLastProgram }: Aud
                     Stop Recording
                 </button>
                 <button onClick={handleNextProgram} disabled={!isRecorded || disabled}>
-                    {isLastProgram ? "Finish experiment" : "Next program"}
+                    {isLastProgram ? "Finish experiment" : `Next program (${programsCompleted}/${programsTotal})`}
                 </button>
             </div>
         </div>

@@ -114,6 +114,8 @@ export const Interface = ({ programs }: InterfaceProps) => {
                             setCurrentIndex((currentIndex ?? 0) + 1)
                         }}
                         isLastProgram={currentIndex === programEntries.length - 1}
+                        programsCompleted={(currentIndex ?? 0) + 1}
+                        programsTotal={programEntries.length}
                     />}
             </div>
             <div className="left-pane">
