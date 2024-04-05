@@ -116,6 +116,7 @@ export const Uploader = ({ results }: UploaderProps) => {
                     <button type="submit" disabled={uploaded}>{buttonText}</button>
                 </div>
             </form>
+            <p>{uploadCount} / {results.length} uploaded</p>
             <FormAlert visible={uploaded} />
         </>
     )
