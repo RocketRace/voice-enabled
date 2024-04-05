@@ -13,7 +13,6 @@ export const Uploader = ({ results }: UploaderProps) => {
     const [uploading, setUploading] = useState(false)
     const [uploaded, setUploaded] = useState(false)
 
-    const [uploadCount, setUploadCount] = useState(0)
     console.log(results)
 
     const uploader_frontend_debug = process.env.NEXT_PUBLIC_DEBUG === "true"
@@ -37,6 +36,7 @@ export const Uploader = ({ results }: UploaderProps) => {
         }
 
         setUploading(true)
+        let uploadedC = 0
         for (let i = 0; i < results.length; i++) {
             const result = results[i];
 
@@ -80,10 +80,10 @@ export const Uploader = ({ results }: UploaderProps) => {
                     })
 
                     if (uploadResponse.ok) {
-                        if (uploadCount === results.length - 1) {
+                        uploadedC += 1
+                        if (uploadedC === results.length) {
                             setUploaded(true)
                         }
-                        setUploadCount(uploadCount + 1)
                     } else {
                         console.error('S3 Upload Error:', uploadResponse)
                         alert('Upload failed.')
