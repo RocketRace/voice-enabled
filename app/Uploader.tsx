@@ -65,7 +65,7 @@ export const Uploader = ({ results }: UploaderProps) => {
                 }
                 else {
                     // obtained the presigned url
-                    const { url, fields } = await response.json()
+                    const { url, fields } = j
 
                     const formData = new FormData()
                     Object.entries(fields).forEach(([key, value]) => {
