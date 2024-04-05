@@ -55,6 +55,7 @@ export async function POST(request: Request) {
             Expires: 600, // Seconds before the presigned post expires. 3600 by default.
         })
         console.log("Sucessful upload")
+        console.log(url, fields, payload, object Key)
         return Response.json({ url, fields })
     } catch (error: any) {
         console.log("Presigned post error", error)
