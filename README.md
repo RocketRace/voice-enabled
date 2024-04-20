@@ -7,7 +7,7 @@ This project is part of my thesis on the application of voice-enabled programmin
 The technical steps are as follows:
 1. The web experiment is hosted on [Vercel](https://vercel.com/) at https://voice-enabled.vercel.app/, using the [Next.js](https://nextjs.org/) framework.
 2. The experiment presents users with instructions and a multiple-choice list of programming languages to be used in the experiment.
-   - Python + JavaScript are mandatory, Rust / Rust / Java are optional.
+   - Python + JavaScript are mandatory, Rust / C++ / Java are optional.
 3. After choosing, the user goes through a randomized sequence of programs in the selected languages.
    - There are three different programs for each programming language: A loop-based Fibonacci function, a recursive factorial function, and a small terminal IO application.
 4. For each program, the user can experiment with the program by executing it and observing the output.
